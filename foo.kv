@@ -1,0 +1,108 @@
+#:kivy 1.0.9
+
+# import config kivy.config
+
+<FooBall>:
+    size: 15, 15
+    canvas.before:
+        PushMatrix
+        Rotate:
+            axis: 0,0,1
+            angle: self.rotation
+            origin: self.center
+    canvas.after:
+        PopMatrix
+    is_alive: 1
+
+<FooRandom>:
+    size: 30, 30
+    shield_radius: 120
+    shield_x: 13
+    shield_y: 15
+    default_transparency: 120
+
+
+<MenuScreen>:
+    BoxLayout:
+        orientation: 'vertical'
+        padding: 10
+        spacing: 10
+
+        Image:
+            source: "res/splash.jpg"
+            on_touch_down: root.manager.current = 'menu'
+            size_hint: (1.0, 0.6)
+            center: self.parent.center
+        Button:
+            size_hint: (1.0, 0.1)
+            text: 'Play'
+            on_press:
+                root.manager.current = 'play'
+
+        Button:
+            size_hint: (1.0, 0.1)
+            text: 'High Scores'
+            on_press: root.manager.current = 'highscores'
+        Button:
+            size_hint: (1.0, 0.1)
+            center: self.parent.pos
+            text: 'Exit'
+            on_press: root.safe_exit()
+
+<HighScoresScreen>:
+    BoxLayout:
+        Button:
+            text: 'My settings button'
+        Button:
+            text: 'Back to menu'
+            on_press: root.manager.current = 'menu'
+
+<SplashScreen>:
+    Image:
+        source: "res/splash-16by9.png"
+        on_touch_down: root.manager.current = 'menu'
+
+<PlayScreen>:
+    game: foo_game
+    on_enter: foo_game.load()
+
+    FooGame:
+        id: foo_game
+        missiles: [foo_ball, foo_ball2]
+        shield: shield
+        city: space_city
+
+        Image:
+            allow_stretch: True
+            keep_ratio: False
+            width: self.parent.width
+            height: self.parent.height
+            source:"res/nasa_starscape.png"
+
+        FooBall:
+            id: space_city
+            center: root.center
+            width: 400
+            height: 200
+            keep_ratio: True
+            size: 360, 180
+            source: "res/space_city.png"
+
+        TransparentFooBall:
+            id: shield
+            center: root.center
+            width: 240
+            height: 190
+            allow_stretch: True
+            keep_ratio: False
+            source: "res/shield.png"
+            opacity:0.4
+
+        FooRandom:
+            id: foo_ball
+            center: foo_ball2.center
+
+        FooAnimated:
+            id: foo_ball2
+            src: "atlas://res/rocket/"
+            pos: 100, 100
